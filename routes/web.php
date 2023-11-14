@@ -41,5 +41,7 @@ Route::controller(KioskIndexController::class)->group(function () {
 
 Route::controller(KioskClinicController::class)->group(function () {
     Route::get('/kiosk/clinic', 'index')->name('kiosk.clinic');
+
+    Route::post('/kiosk/clinic/curl-patient-check', 'curl_patient_check')->name('kiosk.clinic.curl_patient_check');
 });
 // ========== END KIOSK ==========
