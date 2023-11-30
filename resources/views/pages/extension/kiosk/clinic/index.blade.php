@@ -147,6 +147,8 @@
         <div class="p-6">
             <div class="text-right">Pilih dokter</div>
 
+            <div class="text-center" id="titledocter"></div>
+
             <div class="mt-6 grid grid-cols-3 gap-2" id="contentdoctor"></div>
         </div>
     </div>
@@ -226,6 +228,9 @@
 
         function open_formpayment() {
             $('#formpayment').removeClass('hidden');
+            $('#formpatient').addClass('hidden');
+
+            $('#back_to_patient').removeClass('hidden');
 
             $.ajax({
                 method  : "GET",
@@ -250,6 +255,9 @@
         function open_formvisit() {
             $('#formvisit').removeClass('hidden');
 
+            $('#back_to_patient').addClass('hidden');
+            $('#back_to_payment').removeClass('hidden');
+
             $.ajax({
                 method  : "GET",
                 url     : "{{ route('kiosk.clinic.visit') }}",
@@ -270,9 +278,17 @@
             });
         }
 
+        function open_date() {
+            $('#formdate').removeClass('hidden');
+
+            $('#back_to_patient').addClass('hidden');
+            $('#back_to_payment').removeClass('hidden');
+        }
+
         function open_clinic() {
             $('#formdate').addClass('hidden');
             $('#formclinic').removeClass('hidden');
+            $('#formdoctor').addClass('hidden');
 
             $.ajax({
                 method  : "GET",
@@ -311,7 +327,35 @@
                     $('.loader').css("display", "block");
                 },
                 success : function (data) {
-                    console.log(data);
+                    // console.log(data);
+
+                    $('#titledocter').html('Daftar dokter praktek pada <b>' + $('#datae-day').val() + ', ' + $('#datae-date').val() + '</b>');
+
+                    var myObject = JSON.parse(data);
+                    console.log(myObject['data']);
+
+                    $('#contentdoctor').empty();
+
+                    if (myObject['data'] == '') {
+                        var timeout = 2000;
+                        Swal.fire({
+                            position: "middle",
+                            icon: "error",
+                            title: myObject['message'],
+                            showConfirmButton: false,
+                            timer: timeout
+                        });
+
+                        setTimeout(() => {
+                            open_clinic();
+                        }, timeout);
+                    } else {
+                        $.each(myObject['data'], function (key, value) {
+                            $('#contentdoctor').append('<div data-doctor="' + value[0] + '" class="btnclinic text-white text-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg px-5 py-2.5 me-2 mb-2 focus:outline-none">\
+                                ' + value[1] +'\
+                                </div>');
+                        });
+                    }
                 },
                 complete: function () {
                     $('.loader').css("display", "none");
@@ -373,7 +417,6 @@
 
                 close_idpatient();
 
-                $('#formpatient').addClass('hidden');
                 open_formpayment();
             });
 
@@ -385,10 +428,9 @@
                 $('#formpayment').addClass('hidden');
 
                 if (payment != 'A09') {
-                    $('#formvisit').removeClass('hidden');
                     open_formvisit();
                 } else {
-                    $('#formdate').removeClass('hidden');
+                    open_date();
                 }
             });
 
@@ -417,11 +459,32 @@
             });
         });
 
+        // BACK
+        function back_to_patient() {
+            $('#formpatient').removeClass('hidden');
+            $('#formpayment').addClass('hidden');
+
+            $('#datae-mrnum').val('');
+            $('#back_to_patient').addClass('hidden');
+        }
+
+        function back_to_payment() {
+            $('#formpayment').removeClass('hidden');
+            $('#formvisit').addClass('hidden');
+            $('#formdate').addClass('hidden');
+
+            $('#datae-payment').val('');
+            $('#datae-visit').val('');
+
+            $('#back_to_payment').addClass('hidden');
+            $('#back_to_patient').removeClass('hidden');
+        }
+
         function set() {
             $('#formpatient').addClass('hidden');
-            $('#formclinic').removeClass('hidden');
+            $('#formdoctor').removeClass('hidden');
 
-            open_clinic();
+            open_doctor();
         }
 
         // set();
@@ -445,6 +508,20 @@
                 <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
             </svg>
             REFRESH
+        </button>
+
+        <button type="button" id="back_to_patient" onClick="back_to_patient();" class="hidden text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center mr-2">
+            <svg class="w-3.5 h-3.5 mr-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"/>
+            </svg>
+            KEMBALI ke PASIEN
+        </button>
+
+        <button type="button" id="back_to_payment" onClick="back_to_payment();" class="hidden text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center mr-2">
+            <svg class="w-3.5 h-3.5 mr-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"/>
+            </svg>
+            KEMBALI ke PENJAMINAN
         </button>
     </div>
 @endsection
