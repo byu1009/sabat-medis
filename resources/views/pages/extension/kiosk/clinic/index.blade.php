@@ -5,10 +5,34 @@
         $number_numpad = [1,2,3,4,5,6,7,8,9,0];
     @endphp
 
-    <table>
+    <table id="dataex">
         <tr>
             <td>mrnum</td>
             <td><input type="text" id="datae-mrnum"></td>
+        </tr>
+        <tr>
+            <td>pay</td>
+            <td><input type="text" id="datae-pay"></td>
+        </tr>
+        <tr>
+            <td>visit</td>
+            <td><input type="text" id="datae-visit"></td>
+        </tr>
+        <tr>
+            <td>date</td>
+            <td><input type="text" id="datae-date"></td>
+        </tr>
+        <tr>
+            <td>day</td>
+            <td><input type="text" id="datae-day"></td>
+        </tr>
+        <tr>
+            <td>clinic</td>
+            <td><input type="text" id="datae-clinic"></td>
+        </tr>
+        <tr>
+            <td>doctor</td>
+            <td><input type="text" id="datae-doctor"></td>
         </tr>
     </table>
 
@@ -56,6 +80,74 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="formpayment" class="relative hidden flex flex-col text-gray-700 bg-white shadow-md w-1/3 rounded-xl bg-clip-border">
+        <div class="p-6">
+            <div class="text-right">Pilih penjaminan yang anda gunakan</div>
+
+            <div class="mt-6" id="contentpayment">
+
+            </div>
+        </div>
+    </div>
+
+    <div id="formvisit" class="relative hidden flex flex-col text-gray-700 bg-white shadow-md w-1/3 rounded-xl bg-clip-border">
+        <div class="p-6">
+            <div class="text-right">Pilih jenis kunjungan</div>
+
+            <div class="mt-6" id="contentvisit"></div>
+        </div>
+    </div>
+
+    <div id="formdate" class="relative hidden flex flex-col text-gray-700 bg-white shadow-md w-3/4 rounded-xl bg-clip-border">
+        <div class="p-6">
+            <div class="text-right">Pilih tanggal periksa</div>
+
+            <?php
+                $hari = [];
+
+                for ($i=0; $i < 30; $i++) {
+                    $hari[] = date('Y-m-d', strtotime("+" . $i . " day"));
+                }
+            ?>
+
+            <div class="grid grid-cols-8 gap-4 mt-4">
+                @foreach ($hari as $h)
+                    <div data-date="{{ $h }}" data-day="{{ strtoupper(checkhari($h)) }}" class="btndate text-center bg-gray-100 hover:opacity-75 hover:scale-110">
+                        @php
+                            $chari = checkhari($h);
+                        @endphp
+
+                        @if (checkhari($h) == 'Minggu')
+                            <div class="bg-red-600 text-white rounded-t-lg">{{ checkhari($h) }}</div>
+                            <div class="text-2xl font-semibold my-2">{{ date('d', strtotime($h)) }}</div>
+                            <div class="bg-gray-400 text-white rounded-b-lg">{{ checkbulan(date('m', strtotime($h))) }}</div>
+                        @else
+                            <div class="bg-green-600 text-white rounded-t-lg">{{ checkhari($h) }}</div>
+                            <div class="text-2xl font-semibold my-2">{{ date('d', strtotime($h)) }}</div>
+                            <div class="bg-gray-400 text-white rounded-b-lg">{{ checkbulan(date('m', strtotime($h))) }}</div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <div id="formclinic" class="relative hidden flex flex-col text-gray-700 bg-white shadow-md w-3/4 rounded-xl bg-clip-border">
+        <div class="p-6">
+            <div class="text-right">Pilih klinik tujuan</div>
+
+            <div class="mt-6 grid grid-cols-3 gap-2" id="contentclinic"></div>
+        </div>
+    </div>
+
+    <div id="formdoctor" class="relative hidden flex flex-col text-gray-700 bg-white shadow-md w-3/4 rounded-xl bg-clip-border">
+        <div class="p-6">
+            <div class="text-right">Pilih dokter</div>
+
+            <div class="mt-6 grid grid-cols-3 gap-2" id="contentdoctor"></div>
         </div>
     </div>
 
@@ -120,6 +212,7 @@
         });
 
         // MODAL IDPATIENT
+
         function close_idpatient() {
             $('#idpatient').addClass('hidden');
             $('#mrnumber').html('');
@@ -129,6 +222,101 @@
             $('#patient-add').html('');
 
             $('#idpatient').addClass('hidden');
+        }
+
+        function open_formpayment() {
+            $('#formpayment').removeClass('hidden');
+
+            $.ajax({
+                method  : "GET",
+                url     : "{{ route('kiosk.clinic.payment') }}",
+                beforeSend: function () {
+                    $('.loader').css("display", "block");
+                },
+                success : function (data) {
+                    $('#contentpayment').empty();
+                    $.each(data, function (key, value) {
+                        $('#contentpayment').append('<div data-pay="' + value['pay_code'] + '" class="btnpay text-white text-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg px-5 py-2.5 my-4 me-2 mb-2 focus:outline-none">\
+                            ' + value['pay_name'] +'\
+                            </div>');
+                    });
+                },
+                complete: function () {
+                    $('.loader').css("display", "none");
+                }
+            });
+        }
+
+        function open_formvisit() {
+            $('#formvisit').removeClass('hidden');
+
+            $.ajax({
+                method  : "GET",
+                url     : "{{ route('kiosk.clinic.visit') }}",
+                beforeSend: function () {
+                    $('.loader').css("display", "block");
+                },
+                success : function (data) {
+                    $('#contentvisit').empty();
+                    $.each(data, function (key, value) {
+                        $('#contentvisit').append('<div data-visit="' + value['visit_code'] + '" class="btnvisit text-white text-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg px-5 py-2.5 my-4 me-2 mb-2 focus:outline-none">\
+                            ' + value['visit_name'] +'\
+                            </div>');
+                    });
+                },
+                complete: function () {
+                    $('.loader').css("display", "none");
+                }
+            });
+        }
+
+        function open_clinic() {
+            $('#formdate').addClass('hidden');
+            $('#formclinic').removeClass('hidden');
+
+            $.ajax({
+                method  : "GET",
+                url     : "{{ route('kiosk.clinic.curl_clinic_sync') }}",
+                beforeSend: function () {
+                    $('.loader').css("display", "block");
+                },
+                success : function (data) {
+                    console.log(data);
+
+                    $('#contentclinic').empty();
+                    $.each(data, function (key, value) {
+                        $('#contentclinic').append('<div data-clinic="' + value['clinic_code'] + '" class="btnclinic text-white text-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg px-5 py-2.5 me-2 mb-2 focus:outline-none">\
+                            ' + value['clinic_name'] +'\
+                            </div>');
+                    });
+                },
+                complete: function () {
+                    $('.loader').css("display", "none");
+                }
+            });
+        }
+
+        function open_doctor() {
+            $('#formclinic').addClass('hidden');
+            $('#formdoctor').removeClass('hidden');
+
+            $.ajax({
+                method  : "GET",
+                url     : "{{ route('kiosk.clinic.curl_doctor_sync') }}",
+                data    : {
+                    day    : $('#datae-day').val(),
+                    clinic  : $('#datae-clinic').val()
+                },
+                beforeSend: function () {
+                    $('.loader').css("display", "block");
+                },
+                success : function (data) {
+                    console.log(data);
+                },
+                complete: function () {
+                    $('.loader').css("display", "none");
+                }
+            });
         }
 
         $(document).ready(function () {
@@ -156,8 +344,6 @@
                         },
                         success : function (data) {
                             var arr = JSON.parse(data);
-
-                            console.log(arr);
 
                             if (arr['data'] == null) {
                                 Swal.fire({
@@ -188,8 +374,57 @@
                 close_idpatient();
 
                 $('#formpatient').addClass('hidden');
-            })
+                open_formpayment();
+            });
+
+            $('#formpayment').on('click', '.btnpay',function () {
+                var payment = $(this).data('pay');
+
+                $('#datae-pay').val(payment);
+
+                $('#formpayment').addClass('hidden');
+
+                if (payment != 'A09') {
+                    $('#formvisit').removeClass('hidden');
+                    open_formvisit();
+                } else {
+                    $('#formdate').removeClass('hidden');
+                }
+            });
+
+            $('#formvisit').on('click', '.btnvisit',function () {
+                var visit = $(this).data('visit');
+
+                $('#datae-visit').val(visit);
+
+                $('#formvisit').addClass('hidden');
+                $('#formdate').removeClass('hidden');
+            });
+
+            $('#formdate').on('click', '.btndate', function () {
+                $('#datae-date').val($(this).data('date'));
+                $('#datae-day').val($(this).data('day'));
+
+                console.log($(this).data('day'));
+
+                open_clinic();
+            });
+
+            $('#formclinic').on('click', '.btnclinic', function () {
+                $('#datae-clinic').val($(this).data('clinic'));
+
+                open_doctor();
+            });
         });
+
+        function set() {
+            $('#formpatient').addClass('hidden');
+            $('#formclinic').removeClass('hidden');
+
+            open_clinic();
+        }
+
+        // set();
     </script>
 @endsection
 

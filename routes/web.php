@@ -42,6 +42,12 @@ Route::controller(KioskIndexController::class)->group(function () {
 Route::controller(KioskClinicController::class)->group(function () {
     Route::get('/kiosk/clinic', 'index')->name('kiosk.clinic');
 
+    Route::get('/kiosk/clinic/payment', 'payment')->name('kiosk.clinic.payment');
+    Route::get('/kiosk/clinic/visit', 'visit')->name('kiosk.clinic.visit');
+
     Route::post('/kiosk/clinic/curl-patient-check', 'curl_patient_check')->name('kiosk.clinic.curl_patient_check');
+    Route::get('/kiosk/clinic/curl-payment-sync', 'curl_payment_sync')->name('kiosk.clinic.curl_payment_sync');
+    Route::get('/kiosk/clinic/curl-clinic-sync', 'curl_clinic_sync')->name('kiosk.clinic.curl_clinic_sync');
+    Route::get('/kiosk/clinic/curl-doctor-sync', 'curl_doctor_sync')->name('kiosk.clinic.curl_doctor_sync');
 });
 // ========== END KIOSK ==========
