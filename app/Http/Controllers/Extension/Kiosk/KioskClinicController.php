@@ -148,4 +148,70 @@ class KioskClinicController extends Controller
 
         return $response;
     }
+
+    public function confirm_clinic()
+    {
+        $data = [
+            'clinic' => request()->clinic,
+        ];
+
+        $curl = curl_init($this->url . '/confirm/clinic');
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            // 'Content-Type: application/json',
+            // 'Content-Length: ' . strlen(json_encode($data))
+            'usere: ' . $this->username,
+            'passe: ' . $this->password
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        return $response;
+    }
+
+    public function confirm_doctor()
+    {
+        $data = [
+            'doctor' => request()->doctor,
+        ];
+
+        $curl = curl_init($this->url . '/confirm/doctor');
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            // 'Content-Type: application/json',
+            // 'Content-Length: ' . strlen(json_encode($data))
+            'usere: ' . $this->username,
+            'passe: ' . $this->password
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        return $response;
+    }
+
+    public function confirm_payment()
+    {
+        $data = [
+            'payment' => request()->payment,
+        ];
+
+        $curl = curl_init($this->url . '/confirm/payment');
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            // 'Content-Type: application/json',
+            // 'Content-Length: ' . strlen(json_encode($data))
+            'usere: ' . $this->username,
+            'passe: ' . $this->password
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        return $response;
+    }
 }

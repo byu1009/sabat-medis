@@ -5,10 +5,10 @@
         $number_numpad = [1,2,3,4,5,6,7,8,9,0];
     @endphp
 
-    <table id="dataex">
+    <table id="dataex" hidden>
         <tr>
             <td>mrnum</td>
-            <td><input type="text" id="datae-mrnum"></td>
+            <td><input type="text" name="datae-mrnum" id="datae-mrnum"></td>
         </tr>
         <tr>
             <td>pay</td>
@@ -17,6 +17,10 @@
         <tr>
             <td>visit</td>
             <td><input type="text" id="datae-visit"></td>
+        </tr>
+        <tr>
+            <td>visitde</td>
+            <td><input type="text" id="datae-visitde"></td>
         </tr>
         <tr>
             <td>date</td>
@@ -153,6 +157,66 @@
         </div>
     </div>
 
+    <div id="formconfirm" class="relative hidden flex flex-col text-gray-700 bg-white shadow-md w-3/4 rounded-xl bg-clip-border">
+        <div class="p-6">
+            <div class="text-right">Konfirmasi Pendaftaran</div>
+
+            <div class="mt-6 flex gap-6">
+                <div class="w-4/6">
+                    <table class="w-full">
+                        <tbody>
+                            <tr>
+                                <td>NORM</td>
+                                <td>:</td>
+                                <td class="font-bold w-[80%]" id="confmrnum"></td>
+                            </tr>
+                            <tr>
+                                <td>Nama</td>
+                                <td>:</td>
+                                <td class="font-bold" id="confname"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <div class="relative py-4">
+                                        <div class="absolute inset-0 flex items-center">
+                                            <div class="w-full border-b border-gray-300"></div>
+                                        </div>
+                                        <div class="relative flex justify-center">
+                                            <span class="bg-white px-4 text-sm text-gray-500">DETAIL TUJUAN PENDAFTARAN</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Rencana Periksa</td>
+                                <td>:</td>
+                                <td class="font-bold" id="confdate"></td>
+                            </tr>
+                            <tr>
+                                <td>Tujuan Klinik</td>
+                                <td>:</td>
+                                <td class="font-bold" id="confclinic"></td>
+                            </tr>
+                            <tr>
+                                <td>Dokter</td>
+                                <td>:</td>
+                                <td class="font-bold" id="confdoctor"></td>
+                            </tr>
+                            <tr>
+                                <td>Penjaminan</td>
+                                <td>:</td>
+                                <td class="font-bold" id="confpayment"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="w-2/6">
+                    <div class="text-justify">Silahkan tanda tangan untuk dapat melanjutkan proses pendaftaran</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!---Modal -->
     <div class="fixed hidden insert-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="idpatient">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
@@ -230,7 +294,9 @@
             $('#formpayment').removeClass('hidden');
             $('#formpatient').addClass('hidden');
 
-            $('#back_to_patient').removeClass('hidden');
+            $('#back_to').removeClass('hidden');
+            $('#back_to_title').html('KEMBALI');
+            $('#back_to').attr('onclick', 'back_to_patient();');
 
             $.ajax({
                 method  : "GET",
@@ -255,8 +321,8 @@
         function open_formvisit() {
             $('#formvisit').removeClass('hidden');
 
-            $('#back_to_patient').addClass('hidden');
-            $('#back_to_payment').removeClass('hidden');
+            $('#back_to_title').html('KEMBALI');
+            $('#back_to').attr('onclick', 'back_to_payment();');
 
             $.ajax({
                 method  : "GET",
@@ -267,7 +333,7 @@
                 success : function (data) {
                     $('#contentvisit').empty();
                     $.each(data, function (key, value) {
-                        $('#contentvisit').append('<div data-visit="' + value['visit_code'] + '" class="btnvisit text-white text-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg px-5 py-2.5 my-4 me-2 mb-2 focus:outline-none">\
+                        $('#contentvisit').append('<div data-visit="' + value['visit_code'] + '" data-visitde="' + value['visit_name'] + '" class="btnvisit text-white text-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg px-5 py-2.5 my-4 me-2 mb-2 focus:outline-none">\
                             ' + value['visit_name'] +'\
                             </div>');
                     });
@@ -281,14 +347,18 @@
         function open_date() {
             $('#formdate').removeClass('hidden');
 
-            $('#back_to_patient').addClass('hidden');
-            $('#back_to_payment').removeClass('hidden');
+            $('#back_to_title').html('KEMBALI');
+            $('#back_to').attr('onclick', 'back_to_payment();');
         }
 
         function open_clinic() {
             $('#formdate').addClass('hidden');
             $('#formclinic').removeClass('hidden');
             $('#formdoctor').addClass('hidden');
+
+            $('#back_to_title').html('KEMBALI');
+            $('#back_to').attr('onclick', 'back_to_date();');
+
 
             $.ajax({
                 method  : "GET",
@@ -297,8 +367,6 @@
                     $('.loader').css("display", "block");
                 },
                 success : function (data) {
-                    console.log(data);
-
                     $('#contentclinic').empty();
                     $.each(data, function (key, value) {
                         $('#contentclinic').append('<div data-clinic="' + value['clinic_code'] + '" class="btnclinic text-white text-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg px-5 py-2.5 me-2 mb-2 focus:outline-none">\
@@ -316,6 +384,9 @@
             $('#formclinic').addClass('hidden');
             $('#formdoctor').removeClass('hidden');
 
+            $('#back_to_title').html('KEMBALI');
+            $('#back_to').attr('onclick', 'back_to_clinic();');
+
             $.ajax({
                 method  : "GET",
                 url     : "{{ route('kiosk.clinic.curl_doctor_sync') }}",
@@ -327,12 +398,9 @@
                     $('.loader').css("display", "block");
                 },
                 success : function (data) {
-                    // console.log(data);
-
                     $('#titledocter').html('Daftar dokter praktek pada <b>' + $('#datae-day').val() + ', ' + $('#datae-date').val() + '</b>');
 
                     var myObject = JSON.parse(data);
-                    console.log(myObject['data']);
 
                     $('#contentdoctor').empty();
 
@@ -348,10 +416,11 @@
 
                         setTimeout(() => {
                             open_clinic();
+                            $('#datae-clinic').val('');
                         }, timeout);
                     } else {
                         $.each(myObject['data'], function (key, value) {
-                            $('#contentdoctor').append('<div data-doctor="' + value[0] + '" class="btnclinic text-white text-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg px-5 py-2.5 me-2 mb-2 focus:outline-none">\
+                            $('#contentdoctor').append('<div data-doctor="' + value[0] + '" class="btndoctor text-white text-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg px-5 py-2.5 me-2 mb-2 focus:outline-none">\
                                 ' + value[1] +'\
                                 </div>');
                         });
@@ -360,6 +429,82 @@
                 complete: function () {
                     $('.loader').css("display", "none");
                 }
+            });
+        }
+
+        function open_confirm() {
+            $('#formdoctor').addClass('hidden');
+            $('#formconfirm').removeClass('hidden');
+
+            $('#back_to').addClass('hidden');
+
+            var tempDate = new Date($('#datae-date').val());
+            var formattedDate = [tempDate.getDate(), tempDate.getMonth() + 1, tempDate.getFullYear()].join('-');
+
+            $('#confdate').html($('#datae-day').val() + ', ' +formattedDate);
+
+            // CONFIRM PASIEN
+            $.ajax({
+                method  : "POST",
+                url     : "{{ route('kiosk.clinic.curl_patient_check') }}",
+                data    : {
+                    mrnum   : $('#datae-mrnum').val(),
+                    _token  : "{{ csrf_token() }}"
+                },
+                success : function (data) {
+                    var arr = JSON.parse(data);
+
+                    $('#confmrnum').html(arr['data']['no_rkm_medis']);
+                    $('#confname').html(arr['data']['nm_pasien']);
+                },
+            });
+
+            // CONFIRM CLINIC
+            $.ajax({
+                method  : "GET",
+                url     : "{{ route('kiosk.clinic.confirm_clinic') }}",
+                data    : {
+                    clinic   : $('#datae-clinic').val(),
+                },
+                success : function (data) {
+                    var arr = JSON.parse(data);
+
+                    $('#confclinic').html(arr[0]['nama']);
+
+                },
+            });
+
+            // CONFIRM DOCTOR
+            $.ajax({
+                method  : "GET",
+                url     : "{{ route('kiosk.clinic.confirm_doctor') }}",
+                data    : {
+                    doctor   : $('#datae-doctor').val(),
+                },
+                success : function (data) {
+                    var arr = JSON.parse(data);
+
+                    $('#confdoctor').html(arr[0]['nama']);
+
+                },
+            });
+
+            // CONFIRM PAYMENT
+            $.ajax({
+                method  : "GET",
+                url     : "{{ route('kiosk.clinic.confirm_payment') }}",
+                data    : {
+                    payment   : $('#datae-pay').val(),
+                },
+                success : function (data) {
+                    var arr = JSON.parse(data);
+
+                    if (arr[0]['kode'] == 'A09') {
+                        $('#confpayment').html(arr[0]['nama']);
+                    } else {
+                        $('#confpayment').html(arr[0]['nama'] + ' - ' + $('#datae-visitde').val());
+                    }
+                },
             });
         }
 
@@ -435,9 +580,8 @@
             });
 
             $('#formvisit').on('click', '.btnvisit',function () {
-                var visit = $(this).data('visit');
-
-                $('#datae-visit').val(visit);
+                $('#datae-visit').val($(this).data('visit'));
+                $('#datae-visitde').val($(this).data('visitde'));
 
                 $('#formvisit').addClass('hidden');
                 $('#formdate').removeClass('hidden');
@@ -447,8 +591,6 @@
                 $('#datae-date').val($(this).data('date'));
                 $('#datae-day').val($(this).data('day'));
 
-                console.log($(this).data('day'));
-
                 open_clinic();
             });
 
@@ -456,6 +598,12 @@
                 $('#datae-clinic').val($(this).data('clinic'));
 
                 open_doctor();
+            });
+
+            $('#formdoctor').on('click', '.btndoctor', function () {
+                $('#datae-doctor').val($(this).data('doctor'));
+
+                open_confirm();
             });
         });
 
@@ -465,7 +613,8 @@
             $('#formpayment').addClass('hidden');
 
             $('#datae-mrnum').val('');
-            $('#back_to_patient').addClass('hidden');
+
+            $('#back_to').addClass('hidden');
         }
 
         function back_to_payment() {
@@ -473,19 +622,40 @@
             $('#formvisit').addClass('hidden');
             $('#formdate').addClass('hidden');
 
-            $('#datae-payment').val('');
+            $('#datae-pay').val('');
             $('#datae-visit').val('');
 
-            $('#back_to_payment').addClass('hidden');
-            $('#back_to_patient').removeClass('hidden');
+            $('#back_to_title').html('KEMBALI');
+            $('#back_to').attr('onclick', 'back_to_patient();');
         }
 
-        function set() {
-            $('#formpatient').addClass('hidden');
-            $('#formdoctor').removeClass('hidden');
+        function back_to_date() {
+            $('#formdate').removeClass('hidden');
+            $('#formclinic').addClass('hidden');
 
-            open_doctor();
+            $('#datae-date').val('');
+            $('#datae-day').val('');
+
+            $('#back_to_title').html('KEMBALI');
+            $('#back_to').attr('onclick', 'back_to_payment();');
         }
+
+        function back_to_clinic() {
+            $('#formclinic').removeClass('hidden');
+            $('#formdoctor').addClass('hidden');
+
+            $('#datae-clinic').val('');
+
+            $('#back_to_title').html('KEMBALI');
+            $('#back_to').attr('onclick', 'back_to_date();');
+        }
+
+        // function set() {
+        //     $('#formpatient').addClass('hidden');
+        //     $('#formconfirm').removeClass('hidden');
+
+        //     open_confirm();
+        // }
 
         // set();
     </script>
@@ -510,18 +680,11 @@
             REFRESH
         </button>
 
-        <button type="button" id="back_to_patient" onClick="back_to_patient();" class="hidden text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center mr-2">
+        <button type="button" id="back_to" class="hidden text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center mr-2">
             <svg class="w-3.5 h-3.5 mr-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"/>
             </svg>
-            KEMBALI ke PASIEN
-        </button>
-
-        <button type="button" id="back_to_payment" onClick="back_to_payment();" class="hidden text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 text-center inline-flex items-center mr-2">
-            <svg class="w-3.5 h-3.5 mr-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"/>
-            </svg>
-            KEMBALI ke PENJAMINAN
+            <span id="back_to_title"></span>
         </button>
     </div>
 @endsection

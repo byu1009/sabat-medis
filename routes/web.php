@@ -49,5 +49,9 @@ Route::controller(KioskClinicController::class)->group(function () {
     Route::get('/kiosk/clinic/curl-payment-sync', 'curl_payment_sync')->name('kiosk.clinic.curl_payment_sync');
     Route::get('/kiosk/clinic/curl-clinic-sync', 'curl_clinic_sync')->name('kiosk.clinic.curl_clinic_sync');
     Route::get('/kiosk/clinic/curl-doctor-sync', 'curl_doctor_sync')->name('kiosk.clinic.curl_doctor_sync');
+
+    Route::get('/kiosk/clinic/confirm/clinic', 'confirm_clinic')->name('kiosk.clinic.confirm_clinic');
+    Route::get('/kiosk/clinic/confirm/doctor', 'confirm_doctor')->name('kiosk.clinic.confirm_doctor');
+    Route::get('/kiosk/clinic/confirm/payment', 'confirm_payment')->name('kiosk.clinic.confirm_payment');
 });
 // ========== END KIOSK ==========
