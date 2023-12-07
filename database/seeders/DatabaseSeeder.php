@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             CounterValueSeeder::class,
             SystemAboutSeeder::class,
             SabatmedisVisitSeeder::class,
+            SystemSecretSeeder::class,
         ]);
     }
 }
